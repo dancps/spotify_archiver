@@ -1,0 +1,7 @@
+requests
+termcolor
+colorama
+pandas
+numpy
+tqdm
+wget
