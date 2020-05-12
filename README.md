@@ -8,6 +8,8 @@ python code/archive.py -u [user]
 
 In order to make the program run, you'll need to get an authentication token and save it in `.auth/token.txt`. Note that this **is not** the safest approach to authenticating an application. Use at your own risk.
 
+For more options use the command `python code/archive.py -h`.
+
 ## Requirements
 This code was made in Python 3.6.9, so it may work well on any 3.x version.
 
