@@ -1,4 +1,7 @@
 # Spotify archiver
+If the little hoarder inside you is like mine you may want to use this code to keep your playlists saved in a confy place of your storage. 
+
+This program uses the Spotify API to save all of your beloved playlists into JSON format, saving also the art of the playlist.
 
 ## Usage
 To use this code you can import [`archive.py`](./code/archive.py) functions or, if you just want the default archive process, use this command:
