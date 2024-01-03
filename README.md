@@ -30,3 +30,13 @@ To get an authentication token in [Spotify's console](https://developer.spotify.
 
 **Warning:** This is not the safest way of authenticating an application. I'm still learning how to automate this in the safest way, but at this point the plain text method is the one used.
 
+# References
+- [Progress bar](https://builtin.com/software-engineering-perspectives/python-progress-bar)
+- [Export](https://stackoverflow.com/questions/19331497/set-environment-variables-from-file-of-key-value-pairs)
+- [Download image](https://stackoverflow.com/questions/30229231/python-save-image-from-url)
+- [Scopes](https://developer.spotify.com/documentation/web-api/concepts/scopes)
+- [Spotipy: Getting started](https://spotipy.readthedocs.io/en/2.22.1/?highlight=podcast#getting-started)
+- []()
+- []()
+- []()
+- []()
