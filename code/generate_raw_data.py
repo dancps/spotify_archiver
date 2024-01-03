@@ -73,7 +73,8 @@ def main():
         choices=["a", "b", "c"],
         nargs="+",
         type=str,
-        help="multiple types of arguments. May be called all at the same time.",
+        help="multiple types of arguments. "
+             + "May be called all at the same time.",
     )
     args = parser.parse_args()
 
@@ -96,7 +97,8 @@ def main():
         extradb.get_audio_features()
     else:
         raise NotImplementedError(
-            f"{args.command} doesn't exist. Choose one of the folloing: all, analysis, features"
+            f"{args.command} doesn't exist. Choose one of the folloing: all, "
+            + "analysis, features"
         )
 
 
@@ -142,7 +144,9 @@ class RawPlaylists:
             if (image_dict["height"] is None) or (image_dict["width"] is None):
                 image_name = "cover.png"
             else:
-                image_name = f"cover{image_dict['height']}x{image_dict['width']}.png"
+                image_name = "cover" \
+                             + f"{image_dict['height']}" \
+                             + f"x{image_dict['width']}.png"
             image_folder = os.path.join(folder, "images")
             if not os.path.isdir(image_folder):
                 os.makedirs(image_folder)
@@ -164,7 +168,9 @@ class RawPlaylists:
         while playlists:
             for i, playlist in enumerate(playlists["items"]):
                 self.logger.debug(
-                    "%4d %s %s" % (i + 1 + playlists["offset"], playlist["uri"], playlist["name"])
+                    "%4d %s %s" % (i + 1 + playlists["offset"],
+                                   playlist["uri"],
+                                   playlist["name"])
                 )
                 playlists_list.append(playlist)
             if playlists["next"]:
@@ -176,7 +182,8 @@ class RawPlaylists:
         # biggest_name = get_biggest_name([x['name'] for x in p['items']])
         # print(biggest_name)
         self.logger.info("Saving tracks for the playlists")
-        for i, p in enumerate(pb.progressbar(playlists_list, redirect_stdout=True)):
+        for i, p in enumerate(pb.progressbar(playlists_list,
+                                             redirect_stdout=True)):
             # print(playlists_step)
             # for playlists_indes,playlists in playlists_step.items():
             #     print(playlists)
@@ -187,13 +194,19 @@ class RawPlaylists:
             # for i, p in enumerate(playlists['items']):
             # Debug
             # print(p.keys())
-            # print("%4d %s %s" % (i + 1 + playlists['offset'], playlist['uri'],  playlist['name']))
+            # print("%4d %s %s" % (i + 1 + playlists['offset'],
+            #                      playlist['uri'],
+            #                      playlist['name']))
 
             playlist_name = p["name"]
             self.logger.info(f"{colored(playlist_name, attrs=['bold']):40}")
 
             # Creates a dir for each playlist
-            playlist_dir = f"data/raw_data/{self.make_saveable_name(playlist_name)}"
+            playlist_dir = os.path.join(
+                "data",
+                "raw_data",
+                f"{self.make_saveable_name(playlist_name)}"
+            )
             if not os.path.isdir(playlist_dir):
                 self.logger.debug(f"Creating {playlist_dir} dir")
                 os.makedirs(playlist_dir)
@@ -250,7 +263,8 @@ class RawPlaylists:
         if len(error_list) == 0:
             self.logger.info("Succesfully saved")
         else:
-            self.logger.error("Error in playlists:\n  - " + "\n  - ".join(error_list))
+            self.logger.error("Error in playlists:\n  - "
+                              + "\n  - ".join(error_list))
 
         # bar
 
@@ -288,7 +302,8 @@ class ExtraDatabase:
         track_id_set = set()
 
         for _, playlist in enumerate(
-            pb.progressbar(os.listdir(self.raw_data_path), redirect_stdout=True)
+            pb.progressbar(os.listdir(self.raw_data_path),
+                           redirect_stdout=True)
         ):
             playlist_path = os.path.join(self.raw_data_path, playlist)
             metadata_path = os.path.join(playlist_path, f"{playlist}.json")
@@ -301,7 +316,8 @@ class ExtraDatabase:
             with open(metadata_path, "r") as fl:
                 metadata = json.load(fl)
 
-            for _, track in enumerate(pb.progressbar(tracks_data, redirect_stdout=True)):
+            for _, track in enumerate(pb.progressbar(tracks_data,
+                                                     redirect_stdout=True)):
                 track_id = track["track"]["id"]
                 track_name = track["track"]["name"]
                 track_type = track["track"]["type"]
@@ -312,9 +328,14 @@ class ExtraDatabase:
                     )
 
                     continue
-                analysis_file_name = os.path.join(self.musics_raw_path, f"{track_id}_analysis.json")
+                analysis_file_name = os.path.join(
+                    self.musics_raw_path,
+                    f"{track_id}_analysis.json"
+                )
                 if not os.path.isfile(analysis_file_name):
-                    self.logger.debug(f"Getting analysis for {track_id} {track_name}")
+                    self.logger.debug(
+                        f"Getting analysis for {track_id} {track_name}"
+                    )
                     try:
                         response = self.sp.audio_analysis(track_id)
                     except SpotifyException as e:
@@ -369,23 +390,12 @@ class ExtraDatabase:
 
             for track in response:
                 track_id = track["id"]
-                feature_file_name = os.path.join(musics_raw_path, f"{track_id}_features.json")
+                feature_file_name = os.path.join(self.musics_raw_path,
+                                                 f"{track_id}_features.json")
                 if not os.path.isfile(feature_file_name):
                     self.logger.debug(f"Getting features for {track_id} ")
                     with open(feature_file_name, "w") as fl:
                         json.dump(track, fl)
-
-            # logger.debug(" \n"+str(response))
-            # print(response[0].keys())
-            # if not os.path.isfile(analysis_file_name):
-            #         logger.debug(f"Getting analysis for {track_id} {track_name}")
-            #         response = sp.audio_analysis(track_id)
-            #         # Saves metadata about it in the file
-            #         with open(analysis_file_name,'w') as fl:
-            #             json.dump(response,fl)
-
-        # for track_id in track_id_set:
-        #
 
 
 if __name__ == "__main__":
