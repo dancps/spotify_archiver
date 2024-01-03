@@ -1,0 +1,81 @@
+# Metadata
+[project]
+name = "spotify_archiver"
+version = "0.0.1"
+authors = [
+    {name = "Danilo Calhes", email = "dancps96@gmail.com"},
+]
+description = ""
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+]
+dependencies = [
+    "pandas",
+    "spotipy",
+    "progressbar",
+    "progressbar2"
+]
+[project.urls]
+"Homepage" = "https://www.github.com/dancps/housepreice"
+
+[project.optional-dependencies]
+dev = [
+    "pylint",
+    "pytest",
+    "pytest-cov",
+    "isort",
+    "mypy",
+    "flake8",
+    "black"
+]
+
+test = [
+    "pytest",
+    "pytest-cov"
+] 
+
+build = [
+    "setuptools",
+    "wheel", 
+    "twine", 
+    "build" 
+]
+
+doc = [
+    "sphinx==3.5.4",
+    "sphinx-rtd-theme==0.5.2",
+    "markdownify==0.6.3",
+    "jinja2==3.0.3"
+]
+
+# [tool.setuptools.packages.find]
+# where = ["mleng"]  # list of folders that contain the packages (["."] by default)
+
+[tool.setuptools.package-dir]
+spotify_archiver = "code"
+
+[project.scripts]
+# spotify_archiver = "spotify_archiver.main:main"
+spotify_create_databases = "spotify_archiver.create_databases:main"
+
+[tool.pytest.ini_options]
+addopts = "--cov=mleng --cov-report xml --cov-report term-missing"# --cov-fail-under 95"
+
+[tool.coverage.run]
+source = ["code"]
+
+[tool.isort]
+profile = "black"
+
+[tool.black]
+line-length = 100
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
