@@ -42,12 +42,32 @@ from math import ceil
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "command", choices=["all", "playlists", "analysis", "features"], type=str, help="input"
+        "command", choices=["all", "playlists", "analysis", "features"],
+        type=str,
+        help="input"
     )
-    parser.add_argument("-d", "--data-folder", default="data", type=str, help="input")
-    parser.add_argument("-o", "--output", default=".", type=str, help="output")
-    parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
-    parser.add_argument("-D", "--debug", help="increase output verbosity", action="store_true")
+    parser.add_argument(
+        "-d", "--data-folder",
+        default="data",
+        type=str,
+        help="input"
+    )
+    parser.add_argument(
+        "-o", "--output",
+        default=".",
+        type=str,
+        help="output"
+    )
+    parser.add_argument(
+        "-v", "--verbose",
+        help="increase output verbosity",
+        action="store_true"
+    )
+    parser.add_argument(
+        "-D", "--debug",
+        help="increase output verbosity",
+        action="store_true"
+    )
     parser.add_argument(
         "--multichoice",
         choices=["a", "b", "c"],
@@ -59,7 +79,11 @@ def main():
 
     playlists = RawPlaylists(verbose=args.verbose, debug=args.debug)
 
-    extradb = ExtraDatabase(data_folder=args.data_folder, verbose=args.verbose, debug=args.debug)
+    extradb = ExtraDatabase(
+        data_folder=args.data_folder,
+        verbose=args.verbose,
+        debug=args.debug
+    )
 
     if args.command == "all":
         extradb.get_audio_analysis()
@@ -333,7 +357,7 @@ class ExtraDatabase:
             nmin = i * chunk_size
             nmax = min(((i + 1) * chunk_size) - 1, n_tracks - 1)
             self.logger.debug(f"chunk_init: {nmin} - {nmax}")
-            slice_of_ids = list(track_id_set)[nmin : nmax + 1]
+            slice_of_ids = list(track_id_set)[nmin:nmax + 1]
             self.logger.debug(f"Getting analysis for {nmin}:{nmax+1}")
             try:
                 response = self.sp.audio_features(slice_of_ids)
