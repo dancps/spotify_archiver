@@ -62,7 +62,7 @@ spotify_archiver = "code"
 
 [project.scripts]
 # spotify_archiver = "spotify_archiver.main:main"
-spotify_create_databases = "spotify_archiver.create_databases:main"
+spotify_gather_raw_data = "spotify_archiver.generate_raw_data:main"
 
 [tool.pytest.ini_options]
 addopts = "--cov=mleng --cov-report xml --cov-report term-missing"# --cov-fail-under 95"
