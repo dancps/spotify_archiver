@@ -8,16 +8,15 @@ gathering the audio analysis and features for each track.
 
 import argparse
 import json
+import logging
 import os
 from datetime import datetime as dt
 
 import progressbar as pb
+import requests
 import spotipy
 from danfault.logs import Loggir
 from spotipy.exceptions import SpotifyException
-import requests
-
-import logging
 
 from spotify_archiver.authenticate import Authentication
 
