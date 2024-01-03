@@ -11,8 +11,6 @@ import json
 import os
 from datetime import datetime as dt
 
-import numpy as np
-import pandas as pd
 import progressbar as pb
 import spotipy
 from danfault.logs import Loggir
@@ -44,7 +42,9 @@ from math import ceil
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["all", "playlists", "analysis", "features"], type=str, help="input")
+    parser.add_argument(
+        "command", choices=["all", "playlists", "analysis", "features"], type=str, help="input"
+    )
     parser.add_argument("-d", "--data-folder", default="data", type=str, help="input")
     parser.add_argument("-o", "--output", default=".", type=str, help="output")
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
@@ -58,13 +58,9 @@ def main():
     )
     args = parser.parse_args()
 
-    playlists = RawPlaylists(
-        verbose=args.verbose,
-        debug=args.debug)
+    playlists = RawPlaylists(verbose=args.verbose, debug=args.debug)
 
-    extradb = ExtraDatabase(data_folder=args.data_folder,
-                            verbose=args.verbose,
-                            debug=args.debug)
+    extradb = ExtraDatabase(data_folder=args.data_folder, verbose=args.verbose, debug=args.debug)
 
     if args.command == "all":
         extradb.get_audio_analysis()
@@ -120,7 +116,7 @@ class RawPlaylists:
     def download_playlist_images(self, list_of_images, folder):
         image_paths_list = []
         for image_dict in list_of_images:
-            if (image_dict['height'] is None) or (image_dict['width'] is None):
+            if (image_dict["height"] is None) or (image_dict["width"] is None):
                 image_name = "cover.png"
             else:
                 image_name = f"cover{image_dict['height']}x{image_dict['width']}.png"
@@ -129,8 +125,8 @@ class RawPlaylists:
                 os.makedirs(image_folder)
             image_path = os.path.join(image_folder, image_name)
 
-            img_data = requests.get(image_dict['url']).content
-            with open(image_path, 'wb') as handler:
+            img_data = requests.get(image_dict["url"]).content
+            with open(image_path, "wb") as handler:
                 handler.write(img_data)
 
             image_paths_list.append(image_path)
@@ -143,10 +139,12 @@ class RawPlaylists:
         playlists_list = []
         self.logger.info("Getting playlists")
         while playlists:
-            for i, playlist in enumerate(playlists['items']):
-                self.logger.debug("%4d %s %s" % (i + 1 + playlists['offset'], playlist['uri'],  playlist['name']))
+            for i, playlist in enumerate(playlists["items"]):
+                self.logger.debug(
+                    "%4d %s %s" % (i + 1 + playlists["offset"], playlist["uri"], playlist["name"])
+                )
                 playlists_list.append(playlist)
-            if playlists['next']:
+            if playlists["next"]:
                 # list_playlist_steps.append(playlists)
                 playlists = self.sp.next(playlists)
             else:
@@ -168,18 +166,20 @@ class RawPlaylists:
             # print(p.keys())
             # print("%4d %s %s" % (i + 1 + playlists['offset'], playlist['uri'],  playlist['name']))
 
-            playlist_name = p['name']
+            playlist_name = p["name"]
             self.logger.info(f"{colored(playlist_name, attrs=['bold']):40}")
 
             # Creates a dir for each playlist
-            playlist_dir = f'data/raw_data/{self.make_saveable_name(playlist_name)}'
+            playlist_dir = f"data/raw_data/{self.make_saveable_name(playlist_name)}"
             if not os.path.isdir(playlist_dir):
                 self.logger.debug(f"Creating {playlist_dir} dir")
                 os.makedirs(playlist_dir)
 
             # Saves metadata about it in the file
-            infofile_path = os.path.join(playlist_dir, f"{self.make_saveable_name(playlist_name)}.json")
-            with open(infofile_path, 'w') as fl:
+            infofile_path = os.path.join(
+                playlist_dir, f"{self.make_saveable_name(playlist_name)}.json"
+            )
+            with open(infofile_path, "w") as fl:
                 json.dump(p, fl)
 
             # TODO: download the playlist image
@@ -188,36 +188,35 @@ class RawPlaylists:
             # for img in p['images']:
             #     print(img)
             saved_files = self.download_playlist_images(
-                list_of_images=p['images'],
-                folder=playlist_dir
-                )
-            self.logger.debug("Saved: "+", ".join(saved_files))
+                list_of_images=p["images"], folder=playlist_dir
+            )
+            self.logger.debug("Saved: " + ", ".join(saved_files))
 
             # start to get the playlist's tracks
-            results = self.sp.user_playlist_tracks(self.user, p['id'])
+            results = self.sp.user_playlist_tracks(self.user, p["id"])
 
-            tracks = results['items']
-            while results['next']:
+            tracks = results["items"]
+            while results["next"]:
                 results = self.sp.next(results)
-                tracks.extend(results['items'])
+                tracks.extend(results["items"])
 
             # Saves the tracks to a json
             tracks_file = os.path.join(playlist_dir, "tracks.json")
-            with open(tracks_file, 'w') as fl:
+            with open(tracks_file, "w") as fl:
                 json.dump(tracks, fl)
 
             # Test and prints the tracks
             have_error = False
             for track_no, track in enumerate(tracks):
                 try:
-                    track_name = track['track']['name']
+                    track_name = track["track"]["name"]
                     if self.debug and self.verbose:
                         self.logger.debug(f"  - {track_no:3d}: {track_name}")
                 except TypeError as e:
-                    print(colored(": error :", 'red'))
+                    print(colored(": error :", "red"))
                     print(json.dumps(track))
                     error_log = os.path.join(playlist_dir, "error.log")
-                    with open(error_log, 'w') as fl:
+                    with open(error_log, "w") as fl:
                         fl.write("ERROR PROCESSING {track_name}")
                     have_error = True
             if have_error:
@@ -228,7 +227,7 @@ class RawPlaylists:
         if len(error_list) == 0:
             self.logger.info("Succesfully saved")
         else:
-            self.logger.error("Error in playlists:\n  - "+"\n  - ".join(error_list))
+            self.logger.error("Error in playlists:\n  - " + "\n  - ".join(error_list))
 
         # bar
 
