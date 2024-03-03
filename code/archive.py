@@ -1,23 +1,25 @@
 '''
 
 '''
-import requests
-import json
-from math import ceil
-from termcolor import colored
-import colorama # this is necessary due to ANSI color incompatibility
-import pandas as pd
-import os
-import numpy as np
-from tqdm import tqdm
-import datetime
-import wget
 import argparse
-from time import sleep #dbug only
-import emoji
 import csv
+import datetime
+import json
+import os
+from math import ceil
+from time import sleep  # dbug only
 
-def get_playlist_tracks(playlist_id,token,limit=100,offset=0):
+import colorama  # this is necessary due to ANSI color incompatibility
+import emoji
+import numpy as np
+import pandas as pd
+import requests
+import wget
+from termcolor import colored
+from tqdm import tqdm
+
+
+def get_playlist_tracks(playlist_id, token, limit=100, offset=0):
     '''
     Gets a Spotify request for the tracks of the playlists.
 
